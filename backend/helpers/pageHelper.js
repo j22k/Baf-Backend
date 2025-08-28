@@ -1,4 +1,4 @@
-const Page = require('../models/Page');
+const Page = require('../models/page');
 const Partner = require('../models/Partner');
 const Brand = require('../models/Brand');
 const Event = require('../models/Event');
