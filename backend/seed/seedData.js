@@ -1,34 +1,22 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const path = require('path');
-
-// Configure dotenv to look for .env file in the backend root directory
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
-
-const connectDB = require('../config/db');
 const Page = require('../models/Page');
 const Event = require('../models/Event');
 const Brand = require('../models/Brand');
 const Partner = require('../models/Partner');
 
-// ...existing code...
-dotenv.config();
-
 const seedData = async () => {
   try {
-    await connectDB();
-
     // Clear old data
     await Page.deleteMany();
     await Event.deleteMany();
     await Brand.deleteMany();
     await Partner.deleteMany();
 
-    // Insert Pages
+    // Insert home page
     await Page.create({
       page_name: 'home',
       about_section: {
-        description1: "Nestled in the heart of Baghdad, Bab Al Faouz — meaning The Gate of Omens — brings a fresh perspective to interior design...",
+        description1:
+          "Nestled in the heart of Baghdad, Bab Al Faouz — meaning The Gate of Omens — brings a fresh perspective to interior design...",
         description2: "Lorem Ipsum is simply dummy text of the printing and typesetting industry..."
       },
       testimonials: [
@@ -59,11 +47,10 @@ const seedData = async () => {
     ]);
 
     console.log("✅ Sample data inserted!");
-    process.exit();
   } catch (err) {
-    console.error(err);
+    console.error("Error seeding data:", err);
     process.exit(1);
   }
 };
 
-seedData();
+module.exports = seedData;
