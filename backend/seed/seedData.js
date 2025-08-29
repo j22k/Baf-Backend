@@ -5,6 +5,7 @@ const Partner = require('../models/Partner');
 const Services = require('../models/Services');
 const Team = require('../models/Team');
 const Catalog = require('../models/Catalog');
+const Users = require('../models/Users');
 
 const seedData = async () => {
   try {
