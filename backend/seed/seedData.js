@@ -6,9 +6,18 @@ const Services = require('../models/Services');
 const Team = require('../models/Team');
 const Catalog = require('../models/Catalog');
 const Users = require('../models/Users');
+const bcrypt = require('bcryptjs');
+require('dotenv').config()
 
 const seedData = async () => {
   try {
+
+
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminName = process.env.ADMIN_NAME || 'System Administrator';
+
+    console.log(`Creating admin user: ${adminUsername}`);
     // Clear old data
     await Page.deleteMany();
     await Event.deleteMany();
@@ -16,7 +25,21 @@ const seedData = async () => {
     await Partner.deleteMany();
     await Services.deleteMany();
     await Team.deleteMany();
+    await Catalog.deleteMany();
+    await Users.deleteMany();
     
+    // Hash password for admin
+    const hashedPassword = await bcrypt.hash(adminPassword, 12);
+
+   // Insert admin user from environment variables
+    await Users.create({
+      Name: adminName,
+      username: adminUsername,
+      password: hashedPassword,
+      role: 'admin'
+    });
+
+
 
     // Insert home page
     await Page.create({
