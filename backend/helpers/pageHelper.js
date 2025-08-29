@@ -2,6 +2,9 @@ const Page = require('../models/page');
 const Partner = require('../models/Partner');
 const Brand = require('../models/Brand');
 const Event = require('../models/Event');
+const Services = require('../models/Services');
+const Team = require('../models/Team');
+const Catalog = require('../models/Catalog');
 
 const getHomePage = async () => {
   try {
@@ -35,9 +38,37 @@ const getAllEvents = async () => {
   }
 };
 
+
+const getAllservices = async () => {
+  try {
+    return await Services.find({});
+  } catch (err) {
+    throw new Error('Error fetching events: ' + err.message);
+  }
+};
+
+const getTeam = async () => {
+  try {
+    return await Team.find({});
+  } catch (err) {
+    throw new Error('Error fetching events: ' + err.message);
+  }
+};
+
+const getCatalog = async () => {
+  try {
+    return await Catalog.find({});
+  } catch (err) {
+    throw new Error('Error fetching events: ' + err.message);
+  }
+};
+
 module.exports = {
   getHomePage,
   getAllPartners,
   getAllBrands,
   getAllEvents,
+  getAllservices,
+  getTeam,
+  getCatalog
 };

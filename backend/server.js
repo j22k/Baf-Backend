@@ -21,7 +21,7 @@ app.get('/', async (req, res) => {
       pageHelper.getHomePage(),
       pageHelper.getAllPartners(),
       pageHelper.getAllBrands(),
-      pageHelper.getAllEvents()
+      pageHelper.getAllEvents(),
     ]);
 
     if (!homePage) {
@@ -33,6 +33,52 @@ app.get('/', async (req, res) => {
       partners,
       brands,
       events
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// get about page data
+app.get('/about', async (req, res) => {
+  try {
+    const [Services,Team] = await Promise.all([
+      pageHelper.getAllservices(),
+      pageHelper.getTeam()
+    ]);
+
+    if (!Services) {
+      return res.status(404).json({ message: 'Services data not found' });
+    }
+    if (!Team) {
+      return res.status(404).json({ message: 'Team data not found' });
+    }
+
+    res.json({
+      Services: Services,
+      Team: Team
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+app.get('/catalog', async (req, res) => {
+  try {
+    const [Catalog] = await Promise.all([
+      pageHelper.getCatalog()
+    ]);
+
+    if (!Catalog) {
+      return res.status(404).json({ message: 'Services data not found' });
+    }
+
+    res.json({
+      Catalog: Catalog
     });
 
   } catch (err) {
