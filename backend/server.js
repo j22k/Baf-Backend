@@ -14,6 +14,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 
 // JWT Authentication middleware
 const authenticateToken = async (req, res, next) => {
