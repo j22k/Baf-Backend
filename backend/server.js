@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const pageHelper = require('./helpers/pageHelper');
 const { getUser, generateToken, verifyToken } = require('./helpers/userHelpers');
+const cors = require('cors');
+
 
 // Load env vars FIRST
 dotenv.config();
