@@ -18,6 +18,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
+// Static folder for uploads
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 // JWT Authentication middleware
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];

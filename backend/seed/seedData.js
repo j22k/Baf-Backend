@@ -6,6 +6,7 @@ const Services = require('../models/Services');
 const Team = require('../models/Team');
 const Catalog = require('../models/Catalog');
 const Users = require('../models/Users');
+const seedImages = require('./seedImages');
 const bcrypt = require('bcryptjs');
 require('dotenv').config()
 
@@ -106,6 +107,7 @@ const seedData = async () => {
       { Name: "Outdoor Patio", description: "A relaxing outdoor patio area.", image: "patio.jpg" }
     ]);
 
+    await seedImages();
     console.log("✅ Sample data inserted!");
   } catch (err) {
     console.error("Error seeding data:", err);
