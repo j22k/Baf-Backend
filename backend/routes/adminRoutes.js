@@ -12,6 +12,7 @@ const Services = require("../models/Services");
 const Team = require("../models/Team");
 const Testimonials = require("../models/Testimonialschema");
 const Event = require("../models/Event");
+const messageHelper = require("../helpers/messageHelper");
 
 // Middleware to check admin role
 function requireAdmin(req, res, next) {
@@ -388,6 +389,158 @@ router.get("/events/:id", async (req, res) => res.json(await Event.findById(req.
 router.delete("/events/:id", requireAdmin, async (req, res) => {
   const deleted = await Event.findByIdAndDelete(req.params.id);
   res.json(deleted ? { message: "Event deleted" } : { message: "Not found" });
+});
+
+
+/* --------------------
+ Enhanced Messages (Contact Form Submissions) with Date/Time Support
+--------------------- */
+router.get("/messages", requireAdmin, async (req, res) => {
+  try {
+    const result = await messageHelper.getAllMessages(req.query);
+    
+    res.json({
+      success: true,
+      data: result.messages,
+      pagination: result.pagination,
+      fetchedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+router.get("/messages/stats", requireAdmin, async (req, res) => {
+  try {
+    const stats = await messageHelper.getMessageStats();
+    
+    res.json({
+      success: true,
+      data: stats
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+router.get("/messages/date-range", requireAdmin, async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Both startDate and endDate are required (YYYY-MM-DD format)"
+      });
+    }
+
+    const messages = await messageHelper.getMessagesByDateRange(startDate, endDate);
+    
+    res.json({
+      success: true,
+      data: messages,
+      dateRange: { startDate, endDate },
+      count: messages.length,
+      fetchedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+router.get("/messages/recent", requireAdmin, async (req, res) => {
+  try {
+    const { limit = 10 } = req.query;
+    const recentMessages = await messageHelper.getRecentMessages(parseInt(limit));
+    
+    res.json({
+      success: true,
+      data: recentMessages,
+      count: recentMessages.length,
+      fetchedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+router.get("/messages/:id", requireAdmin, async (req, res) => {
+  try {
+    const message = await messageHelper.getMessageById(req.params.id);
+    
+    res.json({ 
+      success: true, 
+      data: message,
+      fetchedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    const statusCode = err.message.includes('not found') ? 404 : 500;
+    res.status(statusCode).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+router.put("/messages/:id/status", requireAdmin, async (req, res) => {
+  try {
+    const updated = await messageHelper.updateMessageStatus(req.params.id, req.body.status);
+    
+    res.json({ 
+      success: true, 
+      message: `Message marked as ${req.body.status}`,
+      data: updated,
+      updatedAt: updated.updatedAt
+    });
+  } catch (err) {
+    const statusCode = err.message.includes('not found') ? 404 : 400;
+    res.status(statusCode).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+router.delete("/messages/:id", requireAdmin, async (req, res) => {
+  try {
+    const deleted = await messageHelper.deleteMessage(req.params.id);
+    
+    res.json({ 
+      success: true, 
+      message: "Message deleted successfully",
+      deletedAt: new Date().toISOString(),
+      deletedMessage: {
+        id: deleted._id,
+        name: deleted.name,
+        originalCreatedAt: deleted.createdAt
+      }
+    });
+  } catch (err) {
+    const statusCode = err.message.includes('not found') ? 404 : 500;
+    res.status(statusCode).json({ 
+      success: false, 
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 module.exports = router;

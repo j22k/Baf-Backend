@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const pageHelper = require("./helpers/pageHelper");
 const { getUser, generateToken, verifyToken } = require("./helpers/userHelpers");
+const messageHelper = require('./helpers/messageHelper');
+
 const cors = require("cors");
 const path = require("path");
 
@@ -76,9 +78,10 @@ app.get("/", async (req, res) => {
 // About (Services + Team)
 app.get("/about", async (req, res) => {
   try {
-    const [Services, Team] = await Promise.all([
+    const [Services, Team, about] = await Promise.all([
       pageHelper.getAllservices(),
       pageHelper.getTeam(),
+      pageHelper.getAbout()
     ]);
 
     if (!Services) {
@@ -90,6 +93,7 @@ app.get("/about", async (req, res) => {
     }
 
     res.json({
+      about,
       Services,
       Team,
     });
@@ -114,6 +118,50 @@ app.get("/catalog", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
+// Enhanced contact form submission route
+app.post("/contact", async (req, res) => {
+  try {
+    const savedMessage = await messageHelper.createMessage(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Message sent successfully! We'll get back to you soon.",
+      data: {
+        id: savedMessage._id,
+        name: savedMessage.name,
+        email: savedMessage.email,
+        message: savedMessage.message,
+        status: savedMessage.status,
+        submittedAt: savedMessage.createdAt,
+        formattedSubmittedAt: savedMessage.formattedCreatedAt,
+        lastUpdated: savedMessage.updatedAt,
+        formattedLastUpdated: savedMessage.formattedUpdatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Contact form error:', error);
+    
+    // Handle validation errors
+    if (error.message.includes('required') || error.message.includes('valid email')) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to send message. Please try again later.",
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+
+
 
 /* --------------------
    Auth Routes
