@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 const catalogSchema = new mongoose.Schema({
   Name: { type: String, required: true },
   description: String,
-  image: String,
+  image: {
+  filename: String,
+  path: String,
+  size: Number,
+  uploadDate: { type: Date, default: Date.now }
+}
 });
 
-module.exports = mongoose.model('catalog', catalogSchema);
+module.exports = mongoose.model('Catalog', catalogSchema);

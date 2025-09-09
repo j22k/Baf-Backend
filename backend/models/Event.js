@@ -6,8 +6,6 @@ const eventSchema = new mongoose.Schema({
   image:  {
   filename: String,
   path: String,
-  size: Number,
-  uploadDate: { type: Date, default: Date.now }
 }
 });
 

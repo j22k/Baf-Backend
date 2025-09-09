@@ -5,8 +5,6 @@ const brandSchema = new mongoose.Schema({
   logo:  {
   filename: String,
   path: String,
-  size: Number,
-  uploadDate: { type: Date, default: Date.now }
 }
 });
 

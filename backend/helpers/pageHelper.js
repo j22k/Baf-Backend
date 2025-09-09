@@ -5,6 +5,9 @@ const Event = require('../models/Event');
 const Services = require('../models/Services');
 const Team = require('../models/Team');
 const Catalog = require('../models/Catalog');
+const about = require('../models/Aboutschema');
+const Testimonials = require('../models/Testimonialschema');
+const About = require('../models/Aboutschema');
 
 const getHomePage = async () => {
   try {
@@ -62,6 +65,20 @@ const getCatalog = async () => {
     throw new Error('Error fetching events: ' + err.message);
   }
 };
+const getAbout = async () => {
+  try {
+    return await About.find({});
+  } catch (err) {
+    throw new Error('Error fetching events: ' + err.message);
+  }
+};
+const getTestimonials = async () => {
+  try {
+    return await Testimonials.find({});
+  } catch (err) {
+    throw new Error('Error fetching events: ' + err.message);
+  }
+};
 
 module.exports = {
   getHomePage,
@@ -70,5 +87,7 @@ module.exports = {
   getAllEvents,
   getAllservices,
   getTeam,
-  getCatalog
+  getCatalog,
+  getAbout,
+  getTestimonials
 };
